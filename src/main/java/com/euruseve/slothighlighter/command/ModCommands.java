@@ -1,5 +1,6 @@
 package com.euruseve.slothighlighter.command;
 
+import com.euruseve.slothighlighter.Config;
 import com.euruseve.slothighlighter.config.ColorConfig;
 import com.euruseve.slothighlighter.config.HighlightConfig;
 import com.euruseve.slothighlighter.gui.ColorPickerScreen;
@@ -24,14 +25,14 @@ public class ModCommands {
                                         .executes(ModCommands::setHighlightingColorCommand)
                                 )
                         )
-                        .then(Commands.literal("setHighlightVariant")
-                                .then(Commands.argument("variant", StringArgumentType.word())
+                        .then(Commands.literal("setHighlightMode")
+                                .then(Commands.argument("mode", StringArgumentType.word())
                                         .suggests((ctx, builder) -> {
                                             builder.suggest("vanilla");
                                             builder.suggest("mod");
                                             return builder.buildFuture();
                                         })
-                                        .executes(ModCommands::setHighlightVariantCommand)
+                                        .executes(ModCommands::setHighlightModeCommand)
                                 )
                         )
                         .then(Commands.literal("gui")
@@ -73,9 +74,9 @@ public class ModCommands {
         }
     }
 
-    private static int setHighlightVariantCommand(CommandContext<CommandSourceStack> ctx) {
+    private static int setHighlightModeCommand(CommandContext<CommandSourceStack> ctx) {
 
-        String variant = StringArgumentType.getString(ctx, "variant");
+        String variant = StringArgumentType.getString(ctx, "mode");
         boolean useMod;
 
         switch (variant.toLowerCase()) {
@@ -88,6 +89,8 @@ public class ModCommands {
         }
 
         HighlightConfig.setUseModHighlight(useMod);
+        Config.USE_MOD_HIGHLIGHT.set(useMod);
+        Config.SPEC.save();
 
         ctx.getSource().sendSuccess(() ->
                         Component.literal("Highlight variant set to: ")
@@ -98,7 +101,6 @@ public class ModCommands {
 
         return 1;
     }
-
 
     private static int fail(CommandContext<CommandSourceStack> ctx, String message) {
         ctx.getSource().sendFailure(Component.literal(message));

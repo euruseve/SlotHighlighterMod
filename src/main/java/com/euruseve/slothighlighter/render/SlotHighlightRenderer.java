@@ -2,6 +2,7 @@ package com.euruseve.slothighlighter.render;
 
 import com.euruseve.slothighlighter.SlotHighlighter;
 import com.euruseve.slothighlighter.config.ColorConfig;
+import com.euruseve.slothighlighter.config.HighlightConfig;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -23,7 +24,8 @@ public class SlotHighlightRenderer {
 
     @SubscribeEvent
     public static void onRenderScreenPost(ScreenEvent.Render.Post event) {
-        if (!(event.getScreen() instanceof AbstractContainerScreen<?> screen)) return;
+        if (!(event.getScreen() instanceof AbstractContainerScreen<?> screen) ||
+                !HighlightConfig.isModHighlightEnabled()) return;
 
         Minecraft mc = Minecraft.getInstance();
         GuiGraphics guiGraphics = event.getGuiGraphics();

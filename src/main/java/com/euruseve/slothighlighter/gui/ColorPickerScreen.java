@@ -1,5 +1,6 @@
 package com.euruseve.slothighlighter.gui;
 
+import com.euruseve.slothighlighter.Config;
 import com.euruseve.slothighlighter.config.ColorConfig;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractSliderButton;
@@ -16,7 +17,7 @@ public class ColorPickerScreen extends Screen {
     private int selectedColor = ColorConfig.innerColor;
 
     public ColorPickerScreen() {
-        super(Component.literal("RGB Color Picker"));
+        super(Component.literal("Color Picker"));
     }
 
     @Override
@@ -58,6 +59,9 @@ public class ColorPickerScreen extends Screen {
                             red = (selectedColor >> 16) & 0xFF;
                             green = (selectedColor >> 8) & 0xFF;
                             blue = selectedColor & 0xFF;
+
+                            Config.INNER_COLOR.set(ColorConfig.defaultColor);
+                            Config.SPEC.save();
                         })
                 .bounds(this.width / 2 - buttonWidth - buttonSpacing / 2, buttonY, buttonWidth, 20)
                 .build());
@@ -66,6 +70,10 @@ public class ColorPickerScreen extends Screen {
                         Component.literal("Apply"),
                         button -> {
                             ColorConfig.innerColor = selectedColor;
+
+                            Config.INNER_COLOR.set(ColorConfig.innerColor);
+                            Config.SPEC.save();
+
                             this.onClose();
                         })
                 .bounds(this.width / 2 + buttonSpacing / 2, buttonY, buttonWidth, 20)
@@ -81,7 +89,7 @@ public class ColorPickerScreen extends Screen {
     public void render(GuiGraphics gui, int mouseX, int mouseY, float delta) {
         super.render(gui, mouseX, mouseY, delta);
 
-        gui.drawCenteredString(this.font, "Highlight Color Picker Menu", this.width / 2, 20, 0xFFFFFF);
+        gui.drawCenteredString(this.font, "Highlighting Color Picker", this.width / 2, 20, 0xFFFFFF);
 
 
         int rectX1 = this.width / 2 - 50;
