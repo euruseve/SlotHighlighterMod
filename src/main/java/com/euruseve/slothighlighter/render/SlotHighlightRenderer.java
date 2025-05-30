@@ -1,6 +1,7 @@
 package com.euruseve.slothighlighter.render;
 
 import com.euruseve.slothighlighter.SlotHighlighter;
+import com.euruseve.slothighlighter.config.ColorConfig;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -16,8 +17,8 @@ import net.neoforged.neoforge.client.event.ScreenEvent;
 @EventBusSubscriber(modid = SlotHighlighter.MODID, value = Dist.CLIENT)
 public class SlotHighlightRenderer {
 
-    private static final int INNER_HIGHLIGHT_COLOR = 0xFFA5D977;
-    private static final int OUTER_BORDER_COLOR = 0xCCFDFFFD;
+//    private static final int INNER_HIGHLIGHT_COLOR = 0xFFA5D977;
+//    private static final int OUTER_BORDER_COLOR = 0xFAFDFFFD;
     private static final int BORDER_THICKNESS = 2;
 
     @SubscribeEvent
@@ -54,11 +55,11 @@ public class SlotHighlightRenderer {
                     y - BORDER_THICKNESS,
                     x + 16 + BORDER_THICKNESS,
                     y + 16 + BORDER_THICKNESS,
-                    OUTER_BORDER_COLOR
+                    ColorConfig.BORDER_COLOR
             );
         }
 
-        graphics.fill(x, y, x + 16, y + 16, INNER_HIGHLIGHT_COLOR);
+        graphics.fill(x - 1, y - 1, x + 17, y + 17, ColorConfig.INNER_COLOR);
 
         RenderSystem.disableBlend();
         RenderSystem.enableDepthTest();
