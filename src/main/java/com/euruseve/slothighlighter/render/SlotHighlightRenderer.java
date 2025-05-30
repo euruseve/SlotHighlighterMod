@@ -55,11 +55,11 @@ public class SlotHighlightRenderer {
                     y - BORDER_THICKNESS,
                     x + 16 + BORDER_THICKNESS,
                     y + 16 + BORDER_THICKNESS,
-                    ColorConfig.BORDER_COLOR
+                    ColorConfig.borderColor
             );
         }
 
-        graphics.fill(x - 1, y - 1, x + 17, y + 17, ColorConfig.INNER_COLOR);
+        graphics.fill(x - 1, y - 1, x + 17, y + 17, ColorConfig.innerColor);
 
         RenderSystem.disableBlend();
         RenderSystem.enableDepthTest();

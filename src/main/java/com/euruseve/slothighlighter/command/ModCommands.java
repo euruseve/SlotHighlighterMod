@@ -2,17 +2,19 @@ package com.euruseve.slothighlighter.command;
 
 import com.euruseve.slothighlighter.config.ColorConfig;
 import com.euruseve.slothighlighter.config.HighlightConfig;
+import com.euruseve.slothighlighter.gui.ColorPickerScreen;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
+import net.minecraft.client.Minecraft;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextColor;
+import net.minecraft.world.entity.player.Player;
 
-public class ModCommands
-{
+public class ModCommands {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher)
     {
         dispatcher.register(
@@ -32,6 +34,17 @@ public class ModCommands
                                         .executes(ModCommands::setHighlightVariantCommand)
                                 )
                         )
+                        .then(Commands.literal("gui")
+                                .executes(ctx -> {
+                                    if (ctx.getSource().getEntity() instanceof Player player) {
+                                        Minecraft.getInstance().execute(() -> {
+                                            Minecraft.getInstance().setScreen(new ColorPickerScreen());
+                                        });
+                                    }
+                                    return 1;
+                                })
+                        )
+
         );
     }
 
@@ -46,7 +59,7 @@ public class ModCommands
             int argb = (int) Long.parseLong(argbHex, 16);
             int rgb = Integer.parseInt(hexInput, 16);
 
-            ColorConfig.INNER_COLOR = argb;
+            ColorConfig.innerColor = argb;
 
             Component colorSquare = Component.literal("\u25A0")
                     .setStyle(Style.EMPTY.withColor(TextColor.fromRgb(rgb)));
