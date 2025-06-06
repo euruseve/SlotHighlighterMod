@@ -1,14 +1,6 @@
-package com.euruseve.slothighlighter;
+package com.euruseve.slothighlighter.config;
 
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import com.euruseve.slothighlighter.config.ColorConfig;
-import com.euruseve.slothighlighter.config.HighlightConfig;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.Item;
+import com.euruseve.slothighlighter.SlotHighlighter;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.config.ModConfigEvent;
@@ -21,25 +13,21 @@ public class Config
 {
     private static final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
 
-    public static final ModConfigSpec.IntValue INNER_COLOR = BUILDER
+    public static final ModConfigSpec.IntValue HIGHLIGHTING_COLOR = BUILDER
             .comment("Color used to highlight slots (ARGB format, e.g. 0xFFFF0000)")
-            .defineInRange("innerColor", ColorConfig.defaultColor, 0xFF000000, 0xFFFFFFFF);
+            .defineInRange("innerColor", ColorConfig.DEFAULT_COLOR, 0xFF000000, 0xFFFFFFFF);
 
     public static final ModConfigSpec.BooleanValue USE_MOD_HIGHLIGHT = BUILDER
-            .comment("Use mod's custom highlight instead of vanilla")
+            .comment("Use mod's custom highlight instead of default")
             .define("useModHighlight", true);
 
     public static final ModConfigSpec SPEC = BUILDER.build();
 
-    public static int innerColor;
-    public static boolean useModHighlight;
-
     @SubscribeEvent
     public static void onLoad(final ModConfigEvent event) {
-        innerColor = INNER_COLOR.get();
-        useModHighlight = USE_MOD_HIGHLIGHT.get();
 
-        ColorConfig.innerColor = innerColor;
-        HighlightConfig.setUseModHighlight(useModHighlight);
+        ColorConfig.setHighlightingColor(HIGHLIGHTING_COLOR.get());
+        HighlightConfig.setModHighlight(USE_MOD_HIGHLIGHT.get());
+
     }
 }

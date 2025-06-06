@@ -18,14 +18,13 @@ import net.neoforged.neoforge.client.event.ScreenEvent;
 @EventBusSubscriber(modid = SlotHighlighter.MODID, value = Dist.CLIENT)
 public class SlotHighlightRenderer {
 
-//    private static final int INNER_HIGHLIGHT_COLOR = 0xFFA5D977;
-//    private static final int OUTER_BORDER_COLOR = 0xFAFDFFFD;
     private static final int BORDER_THICKNESS = 2;
 
     @SubscribeEvent
     public static void onRenderScreenPost(ScreenEvent.Render.Post event) {
         if (!(event.getScreen() instanceof AbstractContainerScreen<?> screen) ||
-                !HighlightConfig.isModHighlightEnabled()) return;
+                !HighlightConfig.isModHighlightEnabled())
+            return;
 
         Minecraft mc = Minecraft.getInstance();
         GuiGraphics guiGraphics = event.getGuiGraphics();
@@ -57,11 +56,11 @@ public class SlotHighlightRenderer {
                     y - BORDER_THICKNESS,
                     x + 16 + BORDER_THICKNESS,
                     y + 16 + BORDER_THICKNESS,
-                    ColorConfig.borderColor
+                    ColorConfig.BORDER_COLOR
             );
         }
 
-        graphics.fill(x - 1, y - 1, x + 17, y + 17, ColorConfig.innerColor);
+        graphics.fill(x - 1, y - 1, x + 17, y + 17, ColorConfig.getHighlightingColor());
 
         RenderSystem.disableBlend();
         RenderSystem.enableDepthTest();

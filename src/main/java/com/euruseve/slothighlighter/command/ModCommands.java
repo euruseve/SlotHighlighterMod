@@ -1,9 +1,8 @@
 package com.euruseve.slothighlighter.command;
 
-import com.euruseve.slothighlighter.Config;
-import com.euruseve.slothighlighter.config.ColorConfig;
+import com.euruseve.slothighlighter.config.Config;
 import com.euruseve.slothighlighter.config.HighlightConfig;
-import com.euruseve.slothighlighter.gui.ColorPickerScreen;
+import com.euruseve.slothighlighter.gui.ConfigScreen;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
@@ -12,7 +11,6 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.TextColor;
 import net.minecraft.world.entity.player.Player;
 
 public class ModCommands {
@@ -20,11 +18,11 @@ public class ModCommands {
     {
         dispatcher.register(
                 Commands.literal("slothl")
-                        .then(Commands.literal("setHighlightingColor")
-                                .then(Commands.argument("hex", StringArgumentType.word())
-                                        .executes(ModCommands::setHighlightingColorCommand)
-                                )
-                        )
+//                        .then(Commands.literal("setHighlightingColor")
+//                                .then(Commands.argument("hex", StringArgumentType.word())
+//                                        .executes(ModCommands::setHighlightingColorCommand)
+//                                )
+//                        )
                         .then(Commands.literal("setHighlightMode")
                                 .then(Commands.argument("mode", StringArgumentType.word())
                                         .suggests((ctx, builder) -> {
@@ -39,7 +37,7 @@ public class ModCommands {
                                 .executes(ctx -> {
                                     if (ctx.getSource().getEntity() instanceof Player player) {
                                         Minecraft.getInstance().execute(() -> {
-                                            Minecraft.getInstance().setScreen(new ColorPickerScreen());
+                                            Minecraft.getInstance().setScreen(new ConfigScreen());
                                         });
                                     }
                                     return 1;
@@ -49,30 +47,30 @@ public class ModCommands {
         );
     }
 
-    private static int setHighlightingColorCommand(CommandContext<CommandSourceStack> ctx) {
-        String hexInput = StringArgumentType.getString(ctx, "hex").replace("#", "").toUpperCase();
-        if (hexInput.length() != 6) {
-            return fail(ctx, "Color must be in HEX format.");
-        }
-
-        try {
-            String argbHex = "FF" + hexInput;
-            int argb = (int) Long.parseLong(argbHex, 16);
-            int rgb = Integer.parseInt(hexInput, 16);
-
-            ColorConfig.innerColor = argb;
-
-            Component colorSquare = Component.literal("\u25A0")
-                    .setStyle(Style.EMPTY.withColor(TextColor.fromRgb(rgb)));
-
-            ctx.getSource().sendSuccess(() ->
-                    Component.literal("Highlight color changed to: ").append(colorSquare), false);
-
-            return 1;
-        } catch (NumberFormatException e) {
-            return fail(ctx, "Invalid color code: " + hexInput);
-        }
-    }
+//    private static int setHighlightingColorCommand(CommandContext<CommandSourceStack> ctx) {
+//        String hexInput = StringArgumentType.getString(ctx, "hex").replace("#", "").toUpperCase();
+//        if (hexInput.length() != 6) {
+//            return fail(ctx, "Color must be in HEX format.");
+//        }
+//
+//        try {
+//            String argbHex = "FF" + hexInput;
+//            int argb = (int) Long.parseLong(argbHex, 16);
+//            int rgb = Integer.parseInt(hexInput, 16);
+//
+//            ColorConfig.highlightingColor = argb;
+//
+//            Component colorSquare = Component.literal("\u25A0")
+//                    .setStyle(Style.EMPTY.withColor(TextColor.fromRgb(rgb)));
+//
+//            ctx.getSource().sendSuccess(() ->
+//                    Component.literal("Highlight color changed to: ").append(colorSquare), false);
+//
+//            return 1;
+//        } catch (NumberFormatException e) {
+//            return fail(ctx, "Invalid color code: " + hexInput);
+//        }
+//    }
 
     private static int setHighlightModeCommand(CommandContext<CommandSourceStack> ctx) {
 
@@ -88,7 +86,7 @@ public class ModCommands {
             }
         }
 
-        HighlightConfig.setUseModHighlight(useMod);
+        HighlightConfig.setModHighlight(useMod);
         Config.USE_MOD_HIGHLIGHT.set(useMod);
         Config.SPEC.save();
 

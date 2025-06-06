@@ -1,179 +1,154 @@
 package com.euruseve.slothighlighter.gui;
 
-import com.euruseve.slothighlighter.Config;
+import com.euruseve.slothighlighter.config.Config;
 import com.euruseve.slothighlighter.config.ColorConfig;
+import com.euruseve.slothighlighter.gui.buttons.ColorSlider;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.AbstractSliderButton;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
 public class ColorPickerScreen extends Screen {
+    private final Screen parentScreen;
+    private int red, green, blue;
+    private int selectedColor;
 
-    private int red = (ColorConfig.innerColor >> 16) & 0xFF;
-    private int green = (ColorConfig.innerColor >> 8) & 0xFF;
-    private int blue = ColorConfig.innerColor & 0xFF;
-
-    private int selectedColor = ColorConfig.innerColor;
-
-    public ColorPickerScreen() {
+    public ColorPickerScreen(Screen parentScreen) {
         super(Component.literal("Color Picker"));
-    }
 
-    @Override
-    protected void init() {
-        super.init();
-
-        initSliders();
-        initButtons();
+        this.parentScreen = parentScreen;
+        this.selectedColor = ColorConfig.getHighlightingColor();
+        this.red = (selectedColor >> 16) & 0xFF;
+        this.green = (selectedColor >> 8) & 0xFF;
+        this.blue = selectedColor & 0xFF;
     }
 
     @Override
     public void render(GuiGraphics gui, int mouseX, int mouseY, float delta) {
+
+        if (parentScreen != null) {
+            parentScreen.render(gui, -1, -1, delta);
+        }
+
+        gui.fill(0, 0, this.width, this.height, 0xA0000000);
+
+        int windowWidth = 240;
+        int windowHeight = 210;
+        int windowX = (this.width - windowWidth) / 2;
+        int windowY = (this.height - windowHeight) / 2;
+
         super.render(gui, mouseX, mouseY, delta);
 
-        gui.drawCenteredString(this.font, "Highlighting Color Picker", this.width / 2, 20, 0xFFFFFF);
-
-        renderColorPreview(gui);
-        renderHexText(gui);
+        renderColorPreview(gui, windowX + 20, windowY, windowWidth - 40, 30);
+        renderHexText(gui, windowX + 20, windowY + 35);
     }
 
-    private void initSliders() {
-        int startX = this.width / 2 - 110;
-        int y = this.height / 2 - 60;
+    @Override
+    protected void init() {
+        int windowWidth = 240;
+        int windowHeight = 180;
+        int windowX = (this.width - windowWidth) / 2;
+        int windowY = (this.height - windowHeight) / 2;
 
-        this.addRenderableWidget(new RGBSlider(startX, y, 220, 20, "Red", red, value -> {
+        this.addRenderableWidget(new ColorSlider(
+                windowX + 20, windowY + 70, windowWidth - 40, 20,
+                "Red", red, value -> {
             red = value;
             updateColor();
-        }));
+        }
+        ));
 
-        this.addRenderableWidget(new RGBSlider(startX, y + 30, 220, 20, "Green", green, value -> {
+        this.addRenderableWidget(new ColorSlider(
+                windowX + 20, windowY + 95, windowWidth - 40, 20,
+                "Green", green, value -> {
             green = value;
             updateColor();
-        }));
+        }
+        ));
 
-        this.addRenderableWidget(new RGBSlider(startX, y + 60, 220, 20, "Blue", blue, value -> {
+        this.addRenderableWidget(new ColorSlider(
+                windowX + 20, windowY + 120, windowWidth - 40, 20,
+                "Blue", blue, value -> {
             blue = value;
             updateColor();
-        }));
+        }
+        ));
+
+        this.addRenderableWidget(Button.builder(
+                Component.literal("Reset"),
+                button -> resetColor()
+        ).bounds(windowX + 20, windowY + 145, 80, 20).build());
+
+        this.addRenderableWidget(Button.builder(
+                Component.literal("Cancel"),
+                button -> this.onClose()
+        ).bounds(windowX + 110, windowY + 145, 50, 20).build());
+
+        this.addRenderableWidget(Button.builder(
+                Component.literal("Apply"),
+                button -> applyColor()
+        ).bounds(windowX + 170, windowY + 145, 50, 20).build());
     }
 
     private void updateColor() {
         selectedColor = (0xFF << 24) | (red << 16) | (green << 8) | blue;
     }
 
-    private void initButtons() {
-        int y = this.height / 2 + 40;
-        int buttonWidth = 90;
-        int spacing = 10;
+    private void resetColor() {
+        selectedColor = ColorConfig.DEFAULT_COLOR;
+        red = (selectedColor >> 16) & 0xFF;
+        green = (selectedColor >> 8) & 0xFF;
+        blue = selectedColor & 0xFF;
 
-        this.addRenderableWidget(Button.builder(
-                        Component.literal("Reset"),
-                        button -> {
-                            ColorConfig.innerColor = ColorConfig.defaultColor;
-                            selectedColor = ColorConfig.defaultColor;
-                            red = (selectedColor >> 16) & 0xFF;
-                            green = (selectedColor >> 8) & 0xFF;
-                            blue = selectedColor & 0xFF;
-
-                            Config.INNER_COLOR.set(ColorConfig.defaultColor);
-                            Config.SPEC.save();
-                        })
-                .bounds(this.width / 2 - buttonWidth - spacing / 2, y, buttonWidth, 20)
-                .build());
-
-        this.addRenderableWidget(Button.builder(
-                        Component.literal("Apply"),
-                        button -> {
-                            ColorConfig.innerColor = selectedColor;
-                            Config.INNER_COLOR.set(ColorConfig.innerColor);
-                            Config.SPEC.save();
-                            this.onClose();
-                        })
-                .bounds(this.width / 2 + spacing / 2, y, buttonWidth, 20)
-                .build());
+        updateColor();
+        this.clearWidgets();
+        this.init();
     }
 
-    private void renderColorPreview(GuiGraphics gui) {
-        int rectX1 = this.width / 2 - 50;
-        int rectX2 = this.width / 2 + 50;
-        int rectY1 = this.height / 2 - 110;
-        int rectY2 = this.height / 2 - 80;
+    private void applyColor() {
+        ColorConfig.setHighlightingColor(selectedColor);
+        Config.HIGHLIGHTING_COLOR.set(selectedColor);
+        Config.SPEC.save();
 
-        gui.fill(rectX1, rectY1, rectX2, rectY2, selectedColor);
+        this.onClose();
+    }
+
+    private void renderColorPreview(GuiGraphics gui, int x, int y, int width, int height) {
+        gui.fill(x, y, x + width, y + height, selectedColor);
 
         int lighter = adjustColorBrightness(selectedColor, +30);
         int darker = adjustColorBrightness(selectedColor, -30);
-        int midTone = blendColors(lighter, darker);
 
-        // Top and Left
-        gui.fill(rectX1 + 1, rectY1, rectX2 - 1, rectY1 + 1, lighter);
-        gui.fill(rectX1, rectY1 + 1, rectX1 + 1, rectY2 - 1, lighter);
-
-        // Bottom and Right
-        gui.fill(rectX1 + 1, rectY2 - 1, rectX2 - 1, rectY2, darker);
-        gui.fill(rectX2 - 1, rectY1 + 1, rectX2, rectY2 - 1, darker);
-
-        // Corners
-        gui.fill(rectX1, rectY1, rectX1 + 1, rectY1 + 1, midTone);
-        gui.fill(rectX2 - 1, rectY2 - 1, rectX2, rectY2, midTone);
+        gui.fill(x, y, x + width, y + 1, lighter);
+        gui.fill(x, y, x + 1, y + height, lighter);
+        gui.fill(x, y + height - 1, x + width, y + height, darker);
+        gui.fill(x + width - 1, y, x + width, y + height, darker);
     }
 
-    private void renderHexText(GuiGraphics gui) {
+    private void renderHexText(GuiGraphics gui, int x, int y) {
         String hexText = String.format("#%02X%02X%02X", red, green, blue);
-        int rectX1 = this.width / 2 - 50;
-        int rectX2 = this.width / 2 + 50;
-        int rectY1 = this.height / 2 - 110;
-        int rectY2 = this.height / 2 - 80;
-
-        int textWidth = this.font.width(hexText);
-        int textX = (rectX1 + rectX2) / 2 - textWidth / 2;
-        int textY = (rectY1 + rectY2) / 2 - this.font.lineHeight / 2;
-
-        gui.drawString(this.font, hexText, textX, textY, 0xFFFFFFFF, true);
+        gui.drawString( Minecraft.getInstance().font, hexText, x, y, 0xFFFFFF);
     }
 
     private int adjustColorBrightness(int color, int delta) {
-        int a = (color >> 24) & 0xFF;
         int r = Math.min(255, Math.max(0, ((color >> 16) & 0xFF) + delta));
         int g = Math.min(255, Math.max(0, ((color >> 8) & 0xFF) + delta));
         int b = Math.min(255, Math.max(0, (color & 0xFF) + delta));
-        return (a << 24) | (r << 16) | (g << 8) | b;
+
+        return (0xFF << 24) | (r << 16) | (g << 8) | b;
     }
 
-    private int blendColors(int color1, int color2) {
-        int a = ((color1 >> 24) & 0xFF + (color2 >> 24) & 0xFF) / 2;
-        int r = (((color1 >> 16) & 0xFF) + ((color2 >> 16) & 0xFF)) / 2;
-        int g = (((color1 >> 8) & 0xFF) + ((color2 >> 8) & 0xFF)) / 2;
-        int b = ((color1 & 0xFF) + (color2 & 0xFF)) / 2;
-        return (a << 24) | (r << 16) | (g << 8) | b;
+    @Override
+    public void onClose() {
+        Minecraft.getInstance().setScreen(parentScreen);
     }
 
-    private static class RGBSlider extends AbstractSliderButton {
-
-        private final String label;
-        private final ValueCallback callback;
-
-        public RGBSlider(int x, int y, int width, int height, String label, int initialValue, ValueCallback callback) {
-            super(x, y, width, height, Component.literal(label + ": " + initialValue), initialValue / 255.0);
-            this.label = label;
-            this.callback = callback;
-        }
-
-        @Override
-        protected void updateMessage() {
-            int value = (int) (this.value * 255);
-            this.setMessage(Component.literal(label + ": " + value));
-        }
-
-        @Override
-        protected void applyValue() {
-            int value = (int) (this.value * 255);
-            callback.onValueChanged(value);
-        }
-
-        public interface ValueCallback {
-            void onValueChanged(int value);
+    @Override
+    public void resize(Minecraft minecraft, int width, int height) {
+        super.resize(minecraft, width, height);
+        if (parentScreen != null) {
+            parentScreen.resize(minecraft, width, height);
         }
     }
 }

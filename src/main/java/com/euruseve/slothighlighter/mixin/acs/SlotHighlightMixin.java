@@ -1,4 +1,4 @@
-package com.euruseve.slothighlighter.mixin;
+package com.euruseve.slothighlighter.mixin.acs;
 
 import com.euruseve.slothighlighter.config.HighlightConfig;
 import net.minecraft.client.gui.GuiGraphics;
@@ -10,8 +10,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(AbstractContainerScreen.class)
-public class MixinAbstractContainerScreen
-{
+public class SlotHighlightMixin {
 
     @Inject(
             method = "renderSlotHighlight(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/world/inventory/Slot;IIF)V",

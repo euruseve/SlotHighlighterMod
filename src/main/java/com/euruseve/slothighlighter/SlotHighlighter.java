@@ -1,6 +1,7 @@
 package com.euruseve.slothighlighter;
 
 import com.euruseve.slothighlighter.command.ModCommands;
+import com.euruseve.slothighlighter.config.Config;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import org.slf4j.Logger;
@@ -26,7 +27,6 @@ public class SlotHighlighter
 
         NeoForge.EVENT_BUS.addListener(this::onRegisterCommands);
     }
-
 
     private void onRegisterCommands(RegisterCommandsEvent event) {
         ModCommands.register(event.getDispatcher());

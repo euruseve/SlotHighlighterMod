@@ -4,9 +4,11 @@
   "package": "com.euruseve.slothighlighter.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "MixinAbstractContainerScreen"
   ],
-  "client": [],
+  "client": [
+    "acs.SlotHighlightMixin",
+    "acs.ItemScaleMixin"
+  ],
   "injectors": {
     "defaultRequire": 1
   }
