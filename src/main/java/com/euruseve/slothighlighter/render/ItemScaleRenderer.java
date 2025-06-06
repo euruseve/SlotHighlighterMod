@@ -41,7 +41,7 @@ public class ItemScaleRenderer {
 
     public static boolean shouldSkipSlotRendering(Slot slot) {
         SlotAnimation anim = animations.get(slot);
-        return anim != null && anim.scale != SCALE_NORMAL;
+        return anim != null && anim.scale != SCALE_NORMAL && slot == hoveredSlot;
     }
 
     public static boolean shouldRenderCustomCarriedItem() {
