@@ -7,7 +7,9 @@ import com.euruseve.slothighlighter.gui.buttons.ColorPreviewButton;
 import com.euruseve.slothighlighter.gui.buttons.TitledButton;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.StringWidget;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
@@ -53,7 +55,7 @@ public class ConfigScreen extends Screen {
 
         this.addRenderableWidget(new TitledButton(
                 buttonX, 40, buttonWidth, 20,
-                Component.literal("Use Default Highlight"),
+                Component.literal("Mod Highlighting"),
                 Component.literal(
                         HighlightConfig.isModHighlightEnabled() ? "True" : "False"
                 ),
@@ -80,17 +82,36 @@ public class ConfigScreen extends Screen {
     }
 
     private void initExperimental() {
-        if(!ItemScaleConfig.isModScalingEnabled())
+        if(!Config.USE_EXPERIMENTAL_FEATURES.get())
             return;
 
         int buttonWidth = 300;
         int buttonX = (this.width - buttonWidth) / 2;
 
+        this.addRenderableWidget(new AbstractWidget(buttonX, 110, buttonWidth, 20,
+                Component.literal("EXPERIMENTAL FEATURES")) {
+            @Override
+            public void renderWidget(GuiGraphics gui, int mouseX, int mouseY, float delta) {
+                gui.drawCenteredString(
+                        Minecraft.getInstance().font,
+                        this.getMessage(),
+                        this.getX() + this.getWidth() / 2,
+                        this.getY() + 6,
+                        0xFFFFFF
+                );
+            }
+
+            @Override
+            protected void updateWidgetNarration(NarrationElementOutput output) {
+                defaultButtonNarrationText(output);
+            }
+        });
+
         this.addRenderableWidget(new TitledButton(
-                buttonX, 100, buttonWidth, 20,
-                Component.literal("Use Default Item Scaling"),
+                buttonX, 130, buttonWidth, 20,
+                Component.literal("Mod Item Scaling"),
                 Component.literal(
-                        HighlightConfig.isModHighlightEnabled() ? "True" : "False"
+                        ItemScaleConfig.isModScalingEnabled() ? "True" : "False"
                 ),
                 button -> {
                     boolean highlight = !ItemScaleConfig.isModScalingEnabled();
