@@ -22,6 +22,4 @@ public class SlotHighlightMixin {
             ci.cancel();
         }
     }
-
-
 }

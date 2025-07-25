@@ -21,10 +21,6 @@ public class Config
             .comment("Use mod's custom highlight instead of default")
             .define("useModHighlight", true);
 
-    public static final ModConfigSpec.BooleanValue USE_EXPERIMENTAL_FEATURES = BUILDER
-            .comment("Enable mod's experimental features")
-            .define("useExperimental", true);
-
     public static final ModConfigSpec SPEC = BUILDER.build();
 
     @SubscribeEvent

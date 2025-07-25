@@ -6,8 +6,7 @@
   "mixins": [
   ],
   "client": [
-    "acs.SlotHighlightMixin",
-    "acs.ItemScaleMixin"
+    "acs.SlotHighlightMixin"
   ],
   "injectors": {
     "defaultRequire": 1

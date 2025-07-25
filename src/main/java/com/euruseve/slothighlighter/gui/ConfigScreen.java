@@ -2,7 +2,6 @@ package com.euruseve.slothighlighter.gui;
 
 import com.euruseve.slothighlighter.config.Config;
 import com.euruseve.slothighlighter.config.HighlightConfig;
-import com.euruseve.slothighlighter.config.ItemScaleConfig;
 import com.euruseve.slothighlighter.gui.buttons.ColorPreviewButton;
 import com.euruseve.slothighlighter.gui.buttons.TitledButton;
 import net.minecraft.client.Minecraft;
@@ -31,7 +30,6 @@ public class ConfigScreen extends Screen {
 
         initHeader();
         initButtons();
-        initExperimental();
     }
 
     private void initHeader() {
@@ -79,51 +77,6 @@ public class ConfigScreen extends Screen {
                     Minecraft.getInstance().setScreen(new ColorPickerScreen(this));
                 }
         ));
-    }
-
-    private void initExperimental() {
-        if(!Config.USE_EXPERIMENTAL_FEATURES.get())
-            return;
-
-        int buttonWidth = 300;
-        int buttonX = (this.width - buttonWidth) / 2;
-
-        this.addRenderableWidget(new AbstractWidget(buttonX, 110, buttonWidth, 20,
-                Component.literal("EXPERIMENTAL FEATURES")) {
-            @Override
-            public void renderWidget(GuiGraphics gui, int mouseX, int mouseY, float delta) {
-                gui.drawCenteredString(
-                        Minecraft.getInstance().font,
-                        this.getMessage(),
-                        this.getX() + this.getWidth() / 2,
-                        this.getY() + 6,
-                        0xFFFFFF
-                );
-            }
-
-            @Override
-            protected void updateWidgetNarration(NarrationElementOutput output) {
-                defaultButtonNarrationText(output);
-            }
-        });
-
-        this.addRenderableWidget(new TitledButton(
-                buttonX, 130, buttonWidth, 20,
-                Component.literal("Mod Item Scaling"),
-                Component.literal(
-                        ItemScaleConfig.isModScalingEnabled() ? "True" : "False"
-                ),
-                button -> {
-                    boolean highlight = !ItemScaleConfig.isModScalingEnabled();
-
-                    ItemScaleConfig.setModScaling(highlight);
-
-                    button.setMessage(Component.literal(
-                            ItemScaleConfig.isModScalingEnabled() ? "True" : "False"
-                    ));
-                }
-        ));
-
     }
 
     @Override

@@ -27,13 +27,6 @@ public class TitledButton extends AbstractWidget {
     @Override
     public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
 
-//        if (this.isHovered()) {
-//            guiGraphics.fill(this.getX(), this.getY(),
-//                    this.getX() + this.getWidth(), this.getY() + this.getHeight(),
-//                    0x80FFFFFF);
-//        }
-
-
         int textColor = this.active ? 0xFFFFFF : 0xA0A0A0;
         guiGraphics.drawString(Minecraft.getInstance().font, this.text,
                 this.getX() + 5, // Відступ від лівого краю

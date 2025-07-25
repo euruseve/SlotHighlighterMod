@@ -50,15 +50,13 @@ public class SlotHighlightRenderer {
         RenderSystem.enableBlend();
         RenderSystem.setShader(GameRenderer::getPositionColorShader);
 
-        if (!slot.getClass().getName().contains("ResultSlot")) {
-            graphics.fill(
-                    x - BORDER_THICKNESS,
-                    y - BORDER_THICKNESS,
-                    x + 16 + BORDER_THICKNESS,
-                    y + 16 + BORDER_THICKNESS,
-                    ColorConfig.BORDER_COLOR
+        graphics.fill(
+                x - BORDER_THICKNESS,
+                y - BORDER_THICKNESS,
+                x + 16 + BORDER_THICKNESS,
+                y + 16 + BORDER_THICKNESS,
+                ColorConfig.BORDER_COLOR
             );
-        }
 
         graphics.fill(x - 1, y - 1, x + 17, y + 17, ColorConfig.getHighlightingColor());
 
